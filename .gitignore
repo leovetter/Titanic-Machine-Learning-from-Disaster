@@ -1,1 +1,4 @@
 titanic/
+.idea/*
+models/
+data/
