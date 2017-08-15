@@ -1,21 +1,20 @@
+from utils import label_encoding, normalize_features
 import pandas as pd
 import numpy as np
-from sklearn.preprocessing import LabelEncoder
 import random
 import pickle
-import timeit
-import sys
 
 DATA_DIR = './data/'
 
-
-def sigmoid(z):
-
-    s = 1 / (1 + np.exp(-z))
-
-    return s
-
 def logistic_regression(X_train, Y_train):
+    """
+    Implement non vectorized logistic regression -
+    Forward and backward pass
+
+    :param X_train: the training features set
+    :param Y_train: the label training set
+    :return:
+    """
 
     lr = 0.5
     J = 0
@@ -31,7 +30,7 @@ def logistic_regression(X_train, Y_train):
         for id, (feats, y) in enumerate(zip(X_train, Y_train)):
 
             z = np.dot(feats,weights) + biais
-            a = sigmoid(z)
+            a = 1 / (1 + np.exp(-z))
             J = -(y*np.log(a) + (1-a)*np.log(1-a))
             J = np.sum(-(y * np.log(a) + (1 - y) * np.log(1 - a)))
             dz = a - y
@@ -55,27 +54,14 @@ def logistic_regression(X_train, Y_train):
     pickle.dump(biais, biais_file)
 
 
-def label_encoding(dataframe, labels):
 
-    le = LabelEncoder()
-    for label in labels:
-        le.fit(dataframe[label])
-        dataframe[label] = le.transform(dataframe[label])
-
-    return dataframe
-
-def normalize_features(X_train):
-
-    for features in X_train:
-        feats = X_train[features].tolist()
-        mean = np.mean(feats)
-        std = np.std(feats)
-        feats = (feats - mean)/std
-        X_train[features] = feats
-
-    return X_train
 
 def get_training_data():
+    """
+    Get the training data from the csv file and clean nan values
+
+    :return:
+    """
 
     train_csv = pd.read_csv(DATA_DIR + 'train.csv')
 
@@ -94,9 +80,6 @@ def get_training_data():
 def train():
 
     X_train, Y_train = get_training_data()
-
-    start = timeit.timeit()
-
     logistic_regression(X_train, Y_train)
 
 if __name__ == "__main__":

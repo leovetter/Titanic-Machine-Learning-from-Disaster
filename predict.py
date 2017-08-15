@@ -1,4 +1,6 @@
 from sklearn.preprocessing import LabelEncoder
+from sklearn.metrics import accuracy_score
+from utils import label_encoding, normalize_features
 import pandas as pd
 import numpy as np
 import pickle
@@ -7,27 +9,14 @@ import sys
 
 DATA_DIR = './data/'
 
-def label_encoding(dataframe, labels):
-
-    le = LabelEncoder()
-    for label in labels:
-        le.fit(dataframe[label])
-        dataframe[label] = le.transform(dataframe[label])
-
-    return dataframe
-
-def normalize_features(X):
-
-    for features in X:
-        feats = X[features].tolist()
-        mean = np.mean(feats)
-        std = np.std(feats)
-        feats = (feats - mean)/std
-        X[features] = feats
-
-    return X
 
 def logistic_regression(X_test):
+    """
+    Implement forward logistic regression
+
+    :param X_test: the training test
+    :return: the predictions for the test set
+    """
 
     weights = pickle.load(open('./models/logistic_weights.pkl', 'r'))
     biais = pickle.load(open('./models/logistic_biais.pkl', 'r'))
@@ -47,11 +36,14 @@ def logistic_regression(X_test):
 
 
 def get_testing_data():
+    """
+    Get the testing data from the csv file and clean nan values
+
+    :return:
+    """
 
     test_csv = pd.read_csv(DATA_DIR + 'test.csv')
 
-    print(test_csv.info())
-    print(test_csv.head())
 
     test_csv['Cabin'] = test_csv['Cabin'].fillna('C0')
     test_csv['Embarked'] = test_csv['Embarked'].fillna('0')
@@ -66,10 +58,19 @@ def get_testing_data():
     return X_test.as_matrix(), test_csv['PassengerId']
 
 def predict():
+    """
+    Predict the ouptut values from the test set and write
+    the predictions in a csv files. Also compute the accuracy score
+
+    :return:
+    """
 
     X_test, PassengerId = get_testing_data()
     preds = logistic_regression(X_test)
 
+    gender_submission_csv = pd.read_csv(DATA_DIR + 'gender_submission.csv')
+
+    print(accuracy_score(list(gender_submission_csv['Survived']), preds))
     with open('./predictions.csv', 'w') as csvfile:
         csvfile.write('PassengerId,Survived\n')
         for pred, id in zip(preds, PassengerId):
