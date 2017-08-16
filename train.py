@@ -8,13 +8,6 @@ import sys
 
 DATA_DIR = './data/'
 
-
-def sigmoid(z):
-
-    s = 1 / (1 + np.exp(-z))
-
-    return s
-
 def logistic_regression(X_train, Y_train):
 
     lr = 0.5
@@ -31,7 +24,7 @@ def logistic_regression(X_train, Y_train):
         for id, (feats, y) in enumerate(zip(X_train, Y_train)):
 
             z = np.dot(feats,weights) + biais
-            a = sigmoid(z)
+            a = 1 / (1 + np.exp(-z))
             J = -(y*np.log(a) + (1-a)*np.log(1-a))
             J = np.sum(-(y * np.log(a) + (1 - y) * np.log(1 - a)))
             dz = a - y
@@ -78,6 +71,9 @@ def normalize_features(X_train):
 def get_training_data():
 
     train_csv = pd.read_csv(DATA_DIR + 'train.csv')
+
+    print(train_csv['Ticket'].value_counts())
+    sys.exit('')
 
     train_csv['Cabin'] = train_csv['Cabin'].fillna('C0')
     train_csv['Embarked'] = train_csv['Embarked'].fillna('0')

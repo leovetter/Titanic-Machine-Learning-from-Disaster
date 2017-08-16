@@ -50,9 +50,6 @@ def get_testing_data():
 
     test_csv = pd.read_csv(DATA_DIR + 'test.csv')
 
-    print(test_csv.info())
-    print(test_csv.head())
-
     test_csv['Cabin'] = test_csv['Cabin'].fillna('C0')
     test_csv['Embarked'] = test_csv['Embarked'].fillna('0')
     test_csv['Age'] = test_csv['Age'].fillna(test_csv['Age'].mean())
