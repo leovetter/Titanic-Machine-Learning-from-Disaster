@@ -13,6 +13,8 @@ Once trained you can generate the predictions file using the command `python pre
 Explanation
 -------------
 
+![alt text](https://github.com/leovetter/Titanic-Machine-Learning-from-Disaster/blob/master/imgs/log_comp_graph.png)
+
 At last but not the least below is the complete explanation of how we can implement the logisitic regression function. What we we need is to minimize the cost function J w.r.t to the parameters of the function.
 So what we want to compute is $ \frac{\partial{J}}{\partial{w_i}} $ and $ \frac{\partial{J}}{\partial{b}} $ and according to the chaine rule we have $ \frac{\partial{J}}{\partial{w_i}}  = \frac{\partial{J}}{\partial{a}} * \frac{\partial{a}}{\partial{z}} * \frac{\partial{z}}{\partial{w_i}} $ and $ \frac{\partial{J}}{\partial{b}}  = \frac{\partial{J}}{\partial{a}} * \frac{\partial{a}}{\partial{z}} * \frac{\partial{z}}{\partial{b}} $. 
 So let's now dive into the math :
