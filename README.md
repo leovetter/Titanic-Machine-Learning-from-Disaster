@@ -14,3 +14,6 @@ Explanation
 -------------
 
 ![alt text](https://github.com/leovetter/Titanic-Machine-Learning-from-Disaster/blob/master/imgs/logistic_computational_graph.png)
+
+![alt text](https://github.com/leovetter/Titanic-Machine-Learning-from-Disaster/blob/master/imgs/log_math.PNG)
+![alt text](https://github.com/leovetter/Titanic-Machine-Learning-from-Disaster/blob/master/imgs/log_math_2.PNG)
