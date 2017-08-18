@@ -3,3 +3,4 @@ titanic/
 models/
 data/
 .Trash-1000/
+*.pyc

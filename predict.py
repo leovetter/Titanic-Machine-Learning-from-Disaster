@@ -1,39 +1,11 @@
-from sklearn.preprocessing import LabelEncoder
+from logisitic_regression import predict_logistic_regression
+from neural_network import predict_ann
 from sklearn.metrics import accuracy_score
 from utils import label_encoding, normalize_features
 import pandas as pd
-import numpy as np
-import pickle
-import csv
-import sys
+import argparse
 
 DATA_DIR = './data/'
-
-
-def logistic_regression(X_test):
-    """
-    Implement forward logistic regression
-
-    :param X_test: the training test
-    :return: the predictions for the test set
-    """
-
-    weights = pickle.load(open('./models/logistic_weights.pkl', 'r'))
-    biais = pickle.load(open('./models/logistic_biais.pkl', 'r'))
-
-    preds = []
-    for feats in X_test:
-
-        z = np.dot(feats, weights) + biais
-        a = 1 / (1 + np.exp(-z))
-
-        if a > 0.5:
-            preds.append(1)
-        elif a <= 0.5:
-            preds.append(0)
-
-    return preds
-
 
 def get_testing_data():
     """
@@ -56,16 +28,21 @@ def get_testing_data():
 
     return X_test.as_matrix(), test_csv['PassengerId']
 
-def predict():
+def predict(model):
     """
     Predict the ouptut values from the test set and write
     the predictions in a csv files. Also compute the accuracy score
 
+    :param model: the model to use for predicting on the titanic test set
     :return:
     """
 
     X_test, PassengerId = get_testing_data()
-    preds = logistic_regression(X_test)
+
+    if model == 'log':
+        preds = predict_logistic_regression(X_test)
+    elif model == 'ann':
+        preds = predict_ann(X_test)
 
     gender_submission_csv = pd.read_csv(DATA_DIR + 'gender_submission.csv')
 
@@ -78,4 +55,10 @@ def predict():
 
 if __name__ == "__main__":
 
-    predict()
+    parser = argparse.ArgumentParser(
+        description='Train machine learning and deep learning models on the titanic dataset')
+    parser.add_argument('-m', dest='model', default='ann',
+                        help='the model to use for training')
+    args = parser.parse_args()
+
+    predict(args.model)

@@ -1,58 +1,10 @@
+from logisitic_regression import fit_logistic_regression
+from neural_network import fit_ann
 from utils import label_encoding, normalize_features
 import pandas as pd
-import numpy as np
-import random
-import pickle
-import sys
+import argparse
 
 DATA_DIR = './data/'
-
-def logistic_regression(X_train, Y_train):
-    """
-    Implement non vectorized logistic regression -
-    Forward and backward pass
-
-    :param X_train: the training features set
-    :param Y_train: the label training set
-    :return:
-    """
-
-    # Hyperparameters initialization
-    lr = 0.05
-
-    # Parameters initialization
-    weights = np.random.normal(0, 0.1, 9)
-    biais = random.normalvariate(0, 0.1)
-
-    m = X_train.shape[0]
-    for epoch in range(300):
-
-        # Forward pass
-        Z = np.dot(X_train, weights) + biais
-        A = 1 / (1 + np.exp(-Z))
-
-        # Loss Computation
-        J = np.sum(-(Y_train * np.log(A) + (1 - Y_train) * np.log(1 - A))) / m
-
-        # Gradient computation
-        dZ = A - Y_train
-        dw = np.dot(dZ, X_train) / m
-        db = np.sum(dZ) / m
-
-        # Update weights
-        weights = weights - lr * dw
-        biais = biais - lr * db
-
-        if epoch % 10 == 0:
-            print("epoch %s - loss %s" % (epoch, J))
-
-    weights_file = open('./models/logistic_weights.pkl', 'w')
-    biais_file = open('./models/logistic_biais.pkl', 'w')
-    pickle.dump(weights, weights_file)
-    pickle.dump(biais, biais_file)
-
-
-
 
 def get_training_data():
     """
@@ -73,13 +25,28 @@ def get_training_data():
 
     normalize_features(X_train)
 
-    return X_train.as_matrix(), Y_train.as_matrix()
+    return X_train.as_matrix().reshape(891, 9), Y_train.as_matrix().reshape(891, 1)
 
-def train():
+def train(model):
+    """
+    Train a model on the titanic training set
+
+    :param model: the model to use for training on the titanic training set
+    :return:
+    """
 
     X_train, Y_train = get_training_data()
-    logistic_regression(X_train, Y_train)
+
+    if model == 'log':
+        fit_logistic_regression(X_train, Y_train)
+    elif model == 'ann':
+        fit_ann(X_train, Y_train)
 
 if __name__ == "__main__":
 
-    train()
+    parser = argparse.ArgumentParser(description='Train machine learning and deep learning models on the titanic dataset')
+    parser.add_argument('-m', dest='model', default='ann',
+                        help='the model to use for training')
+    args = parser.parse_args()
+
+    train(args.model)
