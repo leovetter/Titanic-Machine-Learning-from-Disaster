@@ -3,6 +3,7 @@ import pandas as pd
 import numpy as np
 import random
 import pickle
+import sys
 
 DATA_DIR = './data/'
 
@@ -16,37 +17,34 @@ def logistic_regression(X_train, Y_train):
     :return:
     """
 
-    lr = 0.5
-    J = 0
-    dw = np.zeros(9)
-    db = 0
-    m = X_train.shape[0]
+    # Hyperparameters initialization
+    lr = 0.05
 
+    # Parameters initialization
     weights = np.random.normal(0, 0.1, 9)
-    biais = random.normalvariate(0,0.1)
+    biais = random.normalvariate(0, 0.1)
 
-    for epoch in range(1000):
+    m = X_train.shape[0]
+    for epoch in range(300):
 
-        for id, (feats, y) in enumerate(zip(X_train, Y_train)):
+        # Forward pass
+        Z = np.dot(X_train, weights) + biais
+        A = 1 / (1 + np.exp(-Z))
 
-            z = np.dot(feats,weights) + biais
-            a = 1 / (1 + np.exp(-z))
-            J = -(y*np.log(a) + (1-a)*np.log(1-a))
-            J = np.sum(-(y * np.log(a) + (1 - y) * np.log(1 - a)))
-            dz = a - y
+        # Loss Computation
+        J = np.sum(-(Y_train * np.log(A) + (1 - Y_train) * np.log(1 - A))) / m
 
-            for i, x in enumerate(feats):
-                dw[i] = dw[i] + dz*x
-                db += dz
+        # Gradient computation
+        dZ = A - Y_train
+        dw = np.dot(dZ, X_train) / m
+        db = np.sum(dZ) / m
 
-        J /= m
-        dw /= m
-        db /= m
+        # Update weights
+        weights = weights - lr * dw
+        biais = biais - lr * db
 
-        weights = weights - lr*dw
-        biais = biais - lr*db
-
-        print("epoch %s - loss %s" % (epoch, J))
+        if epoch % 10 == 0:
+            print("epoch %s - loss %s" % (epoch, J))
 
     weights_file = open('./models/logistic_weights.pkl', 'w')
     biais_file = open('./models/logistic_biais.pkl', 'w')
@@ -64,9 +62,6 @@ def get_training_data():
     """
 
     train_csv = pd.read_csv(DATA_DIR + 'train.csv')
-
-    print(train_csv['Ticket'].value_counts())
-    sys.exit('')
 
     train_csv['Cabin'] = train_csv['Cabin'].fillna('C0')
     train_csv['Embarked'] = train_csv['Embarked'].fillna('0')
