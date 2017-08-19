@@ -16,17 +16,17 @@ def backward(a1, a2, a3, z1, z2, z3, weights_1, weights_2, weights_3, X, Y):
     db3 = np.sum(a3 - Y) / m
 
     dw2 = np.dot((a3 - Y), weights_3.T)
-    da2dz2 = np.full([Y.shape[0], 20], 0.01)
-    da2dz2[z2 > 0] = 1
-    dw2 = dw2 * da2dz2
+    da2 = np.full([Y.shape[0], 20], 0.01)
+    da2[z2 > 0] = 1
+    dw2 = dw2 * da2
     dw2 = np.dot(a1.T, dw2)
 
     db2 = np.dot((a3 - Y), weights_3.T)
-    db2 = np.sum(db2 * da2dz2, 0) / m
+    db2 = np.sum(db2 * da2, 0) / m
 
     dw1 = np.dot((a3 - Y), weights_3.T)
-    da2dz2 = np.full([Y.shape[0], 20], 0.01)
-    da2dz2[z2 > 0] = 1
+    da2 = np.full([Y.shape[0], 20], 0.01)
+    da2[z2 > 0] = 1
     dw1 = dw1 * da2dz2
     dw1 = np.dot(dw1, weights_2.T)
     da1dz1 = np.full([Y.shape[0], 20], 0.01)
