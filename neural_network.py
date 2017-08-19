@@ -12,8 +12,8 @@ def backward(a1, a2, a3, z1, z2, z3, weights_1, weights_2, X, Y):
 
     m = X.shape[0]
 
-    dw2 = np.dot(a2.T, (a3 - Y))
-    db2 = np.sum(a2 - Y) / m
+    dw2 = np.dot(a1.T, (a2 - Y))
+    db2= np.sum(a2 - Y) / m
 
     dw1 = np.dot((a2 - Y), weights_2.T)
     da1dz1 = np.full([Y.shape[0], 20], 0.01)
@@ -69,7 +69,7 @@ def fit_ann(X, Y):
     weights_3 = np.random.normal(0, 0.1, size=(20, 1))
     biais_3 = np.random.normal(0, 0.1, 1)
 
-    for epoch in range(3000):
+    for epoch in range(5000):
 
         a1, a2, a3, z1, z2, z3 = forward(X, weights_1, weights_2, weights_3, biais_1, biais_2, biais_3)
         dw1, db1, dw2, db2 = backward(a1, a2, a3, z1, z2, z3, weights_1, weights_2, X, Y)
