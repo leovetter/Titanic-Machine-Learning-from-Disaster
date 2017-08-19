@@ -8,38 +8,38 @@ import sys
 
 DATA_DIR = './data/'
 
-def backward(a1, a2, z1, z2, weights_1, weights_2, X_train, Y_train):
+def backward(a1, a2, a3, z1, z2, z3, weights_1, weights_2, X, Y):
 
-    m = X_train.shape[0]
+    m = X.shape[0]
 
-    dw2 = np.dot(a2.T, (a2 - Y_train))
-    db2= np.sum(a2 - Y_train) / m
+    dw2 = np.dot(a2.T, (a3 - Y))
+    db2 = np.sum(a2 - Y) / m
 
-    dw1 = np.dot((a2 - Y_train), weights_2.T)
-    da1dz1 = np.full([Y_train.shape[0], 20], 0.01)
+    dw1 = np.dot((a2 - Y), weights_2.T)
+    da1dz1 = np.full([Y.shape[0], 20], 0.01)
     da1dz1[z1 > 0] = 1
     dw1 = dw1 * da1dz1
-    dw1 = np.dot(X_train.T, dw1)
+    dw1 = np.dot(X.T, dw1)
 
-    db1 = np.dot((a2 - Y_train), weights_2.T)
+    db1 = np.dot((a2 - Y), weights_2.T)
     db1 = np.sum(db1 * da1dz1, 0) / m
 
     return dw1, db1, dw2, db2
 
 
-def forward(X, weights_1, weights_2, biais_1, biais_2):
+def forward(X, weights_1, weights_2, weights_3, biais_1, biais_2, biais_3):
 
         z1 = np.dot(X, weights_1) + biais_1
         a1 = np.maximum(np.full(z1.shape, 0.01), z1)
 
         z2 = np.dot(a1, weights_2) + biais_2
-        z2 = np.clip(z2, -100, 100)
-        a2 = 1 / (1 + np.exp(-z2))
+        a2 = np.maximum(np.full(z2.shape, 0.01), z2)
 
-        # z3 = np.dot(a2, weights_3) + biais_3
-        # a3 = 1 / (1 + np.exp(-z3))
+        z3 = np.dot(a2, weights_3) + biais_3
+        z3 = np.clip(z3, -100, 100)
+        a3 = 1 / (1 + np.exp(-z3))
 
-        return a1, a2, z1, z2
+        return a1, a2, a3, z1, z2, z3
 
 def predict_ann(X):
 
@@ -66,13 +66,13 @@ def fit_ann(X, Y):
     biais_1 = np.random.normal(0, 0.1, 20)
     weights_2 = np.random.normal(0, 0.1, size=(20, 20))
     biais_2 = np.random.normal(0, 0.1, 20)
-    # weights_3 = np.random.normal(0, 0.1, size=(20, 1))
-    # biais_3 = np.random.normal(0, 0.1, 1)
+    weights_3 = np.random.normal(0, 0.1, size=(20, 1))
+    biais_3 = np.random.normal(0, 0.1, 1)
 
     for epoch in range(3000):
 
-        a1, a2, z1, z2 = forward(X, weights_1, weights_2, biais_1, biais_2)
-        dw1, db1, dw2, db2 = backward(a1, a2, z1, z2, weights_1, weights_2, X, Y)
+        a1, a2, a3, z1, z2, z3 = forward(X, weights_1, weights_2, weights_3, biais_1, biais_2, biais_3)
+        dw1, db1, dw2, db2 = backward(a1, a2, a3, z1, z2, z3, weights_1, weights_2, X, Y)
 
         cost = np.sum(- (Y * np.log(a2) + (1 - Y) * np.log(1 - a2))) / m
 
