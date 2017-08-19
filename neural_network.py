@@ -12,7 +12,7 @@ def backward(a1, a2, z1, z2, weights_1, weights_2, X_train, Y_train):
 
     m = X_train.shape[0]
 
-    dw2 = np.dot(a2.T, (a2 - Y_train))
+    dw2 = np.dot(a1.T, (a2 - Y_train))
     db2= np.sum(a2 - Y_train) / m
 
     dw1 = np.dot((a2 - Y_train), weights_2.T)
@@ -69,7 +69,7 @@ def fit_ann(X, Y):
     # weights_3 = np.random.normal(0, 0.1, size=(20, 1))
     # biais_3 = np.random.normal(0, 0.1, 1)
 
-    for epoch in range(3000):
+    for epoch in range(5000):
 
         a1, a2, z1, z2 = forward(X, weights_1, weights_2, biais_1, biais_2)
         dw1, db1, dw2, db2 = backward(a1, a2, z1, z2, weights_1, weights_2, X, Y)
