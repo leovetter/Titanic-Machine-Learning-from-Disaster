@@ -23,7 +23,7 @@ def get_training_data():
     X_train = train_csv[['Pclass', 'Sex', 'Age',  'SibSp', 'Parch', 'Ticket', 'Fare', 'Cabin', 'Embarked']]
     Y_train = train_csv['Survived']
 
-    normalize_features(X_train)
+    X_train = normalize_features(X_train)
 
     return X_train.as_matrix().reshape(891, 9), Y_train.as_matrix().reshape(891, 1)
 

@@ -24,7 +24,7 @@ def get_testing_data():
 
     X_test = test_csv[['Pclass', 'Sex', 'Age', 'SibSp', 'Parch', 'Ticket', 'Fare', 'Cabin', 'Embarked']]
 
-    normalize_features(X_test)
+    X_test = normalize_features(X_test)
 
     return X_test.as_matrix(), test_csv['PassengerId']
 

@@ -16,11 +16,11 @@ def fit_logistic_regression(X_train, Y_train):
     lr = 0.05
 
     # Parameters initialization
-    weights = np.random.normal(0, 0.1, 9)
+    weights = np.random.normal(0, 0.1, [9, 1])
     biais = random.normalvariate(0, 0.1)
 
     m = X_train.shape[0]
-    for epoch in range(300):
+    for epoch in range(3000):
 
         # Forward pass
         Z = np.dot(X_train, weights) + biais
@@ -28,10 +28,10 @@ def fit_logistic_regression(X_train, Y_train):
 
         # Loss Computation
         J = np.sum(-(Y_train * np.log(A) + (1 - Y_train) * np.log(1 - A))) / m
-
         # Gradient computation
         dZ = A - Y_train
-        dw = np.dot(dZ, X_train) / m
+
+        dw = np.dot(X_train.T, dZ) / m
         db = np.sum(dZ) / m
 
         # Update weights

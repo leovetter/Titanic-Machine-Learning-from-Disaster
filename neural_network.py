@@ -6,38 +6,31 @@ import random
 import pickle
 import sys
 
-DATA_DIR = './data/'
-
-def backward(a1, a2, a3, z1, z2, z3, weights_1, weights_2, weights_3, X, Y):
+def backward(a1, a2, a3, z1, z2, weights_2, weights_3, X, Y):
 
     m = X.shape[0]
 
-    dw3 = np.dot(a2.T, (a3 - Y))
-    db3 = np.sum(a3 - Y) / m
+    dz3 = (a3 - Y)
+    dw3 = np.dot(a2.T, dz3) / m
+    db3 = np.sum(dz3) / m
 
-    dw2 = np.dot((a3 - Y), weights_3.T)
+    dz2 = np.dot(dz3, weights_3.T)
     da2 = np.full([Y.shape[0], 20], 0.01)
     da2[z2 > 0] = 1
-    dw2 = dw2 * da2
-    dw2 = np.dot(a1.T, dw2)
+    dz2 = dz2 * da2
+    dw2 = np.dot(a1.T, dz2) / m
 
-    db2 = np.dot((a3 - Y), weights_3.T)
+    db2 = np.dot(dz3, weights_3.T)
     db2 = np.sum(db2 * da2, 0) / m
 
-    dw1 = np.dot((a3 - Y), weights_3.T)
-    da2 = np.full([Y.shape[0], 20], 0.01)
-    da2[z2 > 0] = 1
-    dw1 = dw1 * da2dz2
-    dw1 = np.dot(dw1, weights_2.T)
-    da1dz1 = np.full([Y.shape[0], 20], 0.01)
-    da1dz1[z1 > 0] = 1
-    dw1 = dw1 * da1dz1
-    dw1 = np.dot(X.T, dw1)
+    dz1 = np.dot(dz2, weights_2.T)
+    da1 = np.full([Y.shape[0], 20], 0.01)
+    da1[z1 > 0] = 1
+    dz1 = dz1 * da1
+    dw1 = np.dot(X.T, dz1) / m
 
-    db1 = np.dot((a3 - Y), weights_3.T)
-    db1 = db1 * da2dz2
-    db1 = np.dot(db1, weights_2.T)
-    db1 = np.sum(db1 * da1dz1, 0) / m
+    db1 = np.dot(dz2, weights_2.T)
+    db1 = np.sum(db1 * da1, 0) / m
 
     return dw1, db1, dw2, db2, dw3, db3
 
@@ -77,7 +70,7 @@ def predict_ann(X):
 
 def fit_ann(X, Y):
 
-    lr = 0.00003
+    lr = 0.2
     m = X.shape[0]
 
     weights_1 = np.random.normal(0, 0.1, size=(9, 20))
@@ -87,10 +80,10 @@ def fit_ann(X, Y):
     weights_3 = np.random.normal(0, 0.1, size=(20, 1))
     biais_3 = np.random.normal(0, 0.1, 1)
 
-    for epoch in range(3000):
+    for epoch in range(5000):
 
         a1, a2, a3, z1, z2, z3 = forward(X, weights_1, weights_2, weights_3, biais_1, biais_2, biais_3)
-        dw1, db1, dw2, db2, dw3, db3 = backward(a1, a2, a3, z1, z2, z3, weights_1, weights_2, weights_3, X, Y)
+        dw1, db1, dw2, db2, dw3, db3 = backward(a1, a2, a3, z1, z2, weights_2, weights_3, X, Y)
 
         cost = np.sum(- (Y * np.log(a3) + (1 - Y) * np.log(1 - a3))) / m
 
