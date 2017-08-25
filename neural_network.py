@@ -7,6 +7,20 @@ import pickle
 import sys
 
 def backward(a1, a2, a3, z1, z2, weights_2, weights_3, X, Y):
+    """
+    Compute the backward pass of a 3 hidden layer neural network
+
+    :param a1: the activation output for the first layer
+    :param a2: the activation output for the second layer
+    :param a3: the activation output for the third layer
+    :param z1: the cache output for the first layer
+    :param z2: the cache output for the second layer
+    :param weights_2: the weights for the second layer
+    :param weights_3: the weights for the third layer
+    :param X: the training inputs
+    :param Y: the training labels
+    :return:
+    """
 
     m = X.shape[0]
 
@@ -14,42 +28,57 @@ def backward(a1, a2, a3, z1, z2, weights_2, weights_3, X, Y):
     dw3 = np.dot(a2.T, dz3) / m
     db3 = np.sum(dz3) / m
 
-    dz2 = np.dot(dz3, weights_3.T)
-    da2 = np.full([Y.shape[0], 20], 0.01)
-    da2[z2 > 0] = 1
-    dz2 = dz2 * da2
+    da2 = np.dot(dz3, weights_3.T)
+    der_g2 = np.full([Y.shape[0], 20], 0.01)[z2 > 0] = 1
+    dz2 = da2 * der_g2
     dw2 = np.dot(a1.T, dz2) / m
 
-    db2 = np.dot(dz3, weights_3.T)
-    db2 = np.sum(db2 * da2, 0) / m
+    db2 = np.sum(da2, 0) / m
 
-    dz1 = np.dot(dz2, weights_2.T)
-    da1 = np.full([Y.shape[0], 20], 0.01)
-    da1[z1 > 0] = 1
-    dz1 = dz1 * da1
+    da1 = np.dot(dz2, weights_2.T)
+    der_g1 = np.full([Y.shape[0], 20], 0.01)
+    der_g1[z1 > 0] = 1
+    dz1 = da1 * der_g1
     dw1 = np.dot(X.T, dz1) / m
 
-    db1 = np.dot(dz2, weights_2.T)
-    db1 = np.sum(db1 * da1, 0) / m
+    db1 = np.sum(da1, 0) / m
 
     return dw1, db1, dw2, db2, dw3, db3
 
 
 def forward(X, weights_1, weights_2, weights_3, biais_1, biais_2, biais_3):
+    """
+    Compute the forward pass of a 3 hidden layer neural network
 
-        z1 = np.dot(X, weights_1) + biais_1
-        a1 = np.maximum(np.full(z1.shape, 0.01), z1)
+    :param X: the training inputs
+    :param weights_1: the weights for the first layer
+    :param weights_2: the weights for the second layer
+    :param weights_3: the weights for the third layer
+    :param biais_1: the bias term for the first layer
+    :param biais_2: the bias term for the second layer
+    :param biais_3: the bias term for the third layer
+    :return:
+    """
 
-        z2 = np.dot(a1, weights_2) + biais_2
-        a2 = np.maximum(np.full(z2.shape, 0.01), z2)
+    z1 = np.dot(X, weights_1) + biais_1
+    a1 = np.maximum(np.full(z1.shape, 0.01), z1)
 
-        z3 = np.dot(a2, weights_3) + biais_3
-        z3 = np.clip(z3, -100, 100)
-        a3 = 1 / (1 + np.exp(-z3))
+    z2 = np.dot(a1, weights_2) + biais_2
+    a2 = np.maximum(np.full(z2.shape, 0.01), z2)
 
-        return a1, a2, a3, z1, z2, z3
+    z3 = np.dot(a2, weights_3) + biais_3
+    z3 = np.clip(z3, -100, 100)
+    a3 = 1 / (1 + np.exp(-z3))
+
+    return a1, a2, a3, z1, z2, z3
 
 def predict_ann(X):
+    """
+    Make predictions on the inputs
+
+    :param X: the inputs of the networks
+    :return:
+    """
 
     weights_1 = pickle.load(open('./models/ann_weights_1.pkl', 'r'))
     biais_1 = pickle.load(open('./models/ann_biais_1.pkl', 'r'))
@@ -69,6 +98,13 @@ def predict_ann(X):
     return preds
 
 def fit_ann(X, Y):
+    """
+    Fit a 3 hidden layer neural network
+
+    :param X: the training inputs
+    :param Y: the training labels
+    :return:
+    """
 
     lr = 0.2
     m = X.shape[0]
