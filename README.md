@@ -4,11 +4,11 @@ In the notebook you can check how logistic regression is applied to the titanic 
 
 Training
 -------------
-You can train your own model on the dataset using the command `python train.py`
+You can train your own model on the dataset using the command `python train.py [-m MODEL]
 
 Prediction
 -------------
-Once trained you can generate the predictions file using the command `python predict.py`
+Once trained you can generate the predictions file using the command `python predict.py [-m MODEL]`
 
 Explanation
 -------------
