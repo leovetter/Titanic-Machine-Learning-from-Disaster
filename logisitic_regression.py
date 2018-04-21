@@ -41,8 +41,8 @@ def fit_logistic_regression(X_train, Y_train):
         if epoch % 10 == 0:
             print("epoch %s - loss %s" % (epoch, J))
 
-    weights_file = open('./models/logistic_weights.pkl', 'w')
-    biais_file = open('./models/logistic_biais.pkl', 'w')
+    weights_file = open('./models/logistic_weights.pkl', 'wb')
+    biais_file = open('./models/logistic_biais.pkl', 'wb')
     pickle.dump(weights, weights_file)
     pickle.dump(biais, biais_file)
 
@@ -54,8 +54,8 @@ def predict_logistic_regression(X_test):
     :return: the predictions for the test set
     """
 
-    weights = pickle.load(open('./models/logistic_weights.pkl', 'r'))
-    biais = pickle.load(open('./models/logistic_biais.pkl', 'r'))
+    weights = pickle.load(open('./models/logistic_weights.pkl', 'rb'))
+    biais = pickle.load(open('./models/logistic_biais.pkl', 'rb'))
 
     Z = np.dot(X_test, weights) + biais
     A = 1 / (1 + np.exp(-Z))

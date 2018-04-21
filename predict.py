@@ -2,31 +2,8 @@ from logisitic_regression import predict_logistic_regression
 from neural_network import predict_ann
 from sklearn.metrics import accuracy_score
 from utils import label_encoding, normalize_features
-import pandas as pd
 import argparse
 
-DATA_DIR = './data/'
-
-def get_testing_data():
-    """
-    Get the testing data from the csv file and clean nan values
-
-    :return:
-    """
-
-    test_csv = pd.read_csv(DATA_DIR + 'test.csv')
-
-    test_csv['Cabin'] = test_csv['Cabin'].fillna('C0')
-    test_csv['Embarked'] = test_csv['Embarked'].fillna('0')
-    test_csv['Age'] = test_csv['Age'].fillna(test_csv['Age'].mean())
-    test_csv['Fare'] = test_csv['Fare'].fillna(test_csv['Fare'].mean())
-    test_csv = label_encoding(test_csv, ['Sex', 'Ticket', 'Cabin', 'Embarked'])
-
-    X_test = test_csv[['Pclass', 'Sex', 'Age', 'SibSp', 'Parch', 'Ticket', 'Fare', 'Cabin', 'Embarked']]
-
-    X_test = normalize_features(X_test)
-
-    return X_test.as_matrix(), test_csv['PassengerId']
 
 def predict(model):
     """
@@ -44,9 +21,6 @@ def predict(model):
     elif model == 'ann':
         preds = predict_ann(X_test)
 
-    gender_submission_csv = pd.read_csv(DATA_DIR + 'gender_submission.csv')
-
-    print(accuracy_score(list(gender_submission_csv['Survived']), preds))
     with open('./predictions.csv', 'w') as csvfile:
         csvfile.write('PassengerId,Survived\n')
         for pred, id in zip(preds, PassengerId):

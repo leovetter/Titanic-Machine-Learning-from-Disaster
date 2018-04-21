@@ -80,14 +80,14 @@ def predict_ann(X):
     :return:
     """
 
-    weights_1 = pickle.load(open('./models/ann_weights_1.pkl', 'r'))
-    biais_1 = pickle.load(open('./models/ann_biais_1.pkl', 'r'))
+    weights_1 = pickle.load(open('./models/ann_weights_1.pkl', 'rb'))
+    biais_1 = pickle.load(open('./models/ann_biais_1.pkl', 'rb'))
 
-    weights_2 = pickle.load(open('./models/ann_weights_2.pkl', 'r'))
-    biais_2 = pickle.load(open('./models/ann_biais_2.pkl', 'r'))
+    weights_2 = pickle.load(open('./models/ann_weights_2.pkl', 'rb'))
+    biais_2 = pickle.load(open('./models/ann_biais_2.pkl', 'rb'))
 
-    weights_3 = pickle.load(open('./models/ann_weights_3.pkl', 'r'))
-    biais_3 = pickle.load(open('./models/ann_biais_3.pkl', 'r'))
+    weights_3 = pickle.load(open('./models/ann_weights_3.pkl', 'rb'))
+    biais_3 = pickle.load(open('./models/ann_biais_3.pkl', 'rb'))
 
     _, preds, _, _, _, _ = forward(X, weights_1, weights_2, weights_3, biais_1, biais_2, biais_3)
 
@@ -116,7 +116,7 @@ def fit_ann(X, Y):
     weights_3 = np.random.normal(0, 0.1, size=(20, 1))
     biais_3 = np.random.normal(0, 0.1, 1)
 
-    for epoch in range(5000):
+    for epoch in range(2000):
 
         a1, a2, a3, z1, z2, z3 = forward(X, weights_1, weights_2, weights_3, biais_1, biais_2, biais_3)
         dw1, db1, dw2, db2, dw3, db3 = backward(a1, a2, a3, z1, z2, weights_2, weights_3, X, Y)
@@ -132,17 +132,17 @@ def fit_ann(X, Y):
 
         print("epoch %s - loss %s" % (epoch, cost))
 
-    weights_1_file = open('./models/ann_weights_1.pkl', 'w')
-    biais_1_file = open('./models/ann_biais_1.pkl', 'w')
+    weights_1_file = open('./models/ann_weights_1.pkl', 'wb')
+    biais_1_file = open('./models/ann_biais_1.pkl', 'wb')
     pickle.dump(weights_1, weights_1_file)
     pickle.dump(biais_1, biais_1_file)
 
-    weights_2_file = open('./models/ann_weights_2.pkl', 'w')
-    biais_2_file = open('./models/ann_biais_2.pkl', 'w')
+    weights_2_file = open('./models/ann_weights_2.pkl', 'wb')
+    biais_2_file = open('./models/ann_biais_2.pkl', 'wb')
     pickle.dump(weights_2, weights_2_file)
     pickle.dump(biais_2, biais_2_file)
 
-    weights_3_file = open('./models/ann_weights_3.pkl', 'w')
-    biais_3_file = open('./models/ann_biais_3.pkl', 'w')
+    weights_3_file = open('./models/ann_weights_3.pkl', 'wb')
+    biais_3_file = open('./models/ann_biais_3.pkl', 'wb')
     pickle.dump(weights_3, weights_3_file)
     pickle.dump(biais_3, biais_3_file)
