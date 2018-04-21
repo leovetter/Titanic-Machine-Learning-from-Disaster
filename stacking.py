@@ -121,6 +121,19 @@ svc_params = {
     'degree': [1, 2, 3, 4, 5],
 }
 
+xgb_params = {
+    'learning_rate': [0.25, 0.5, 0.75, 1],
+    'n_estimators': [10, 50, 100, 300, 700, 1000, 3000, 5000],
+    'max_depth': [5, 10, 20, 30, None],
+    'min_child_weight': [1, 2, 5, 7, 10],
+    'gamma': [0.5, 1, 1.5, 2],
+    'subsample': [0.3, 0.8, 1.2, 1.7, 2],
+    'colsample_bytree': [0.3, 0.8, 1.2, 1.7, 2],
+    'objective': ['binary:logistic'],
+    'nthread': [-1],
+    'scale_pos_weight': [0.3, 0.6, 1, 1.3, 1.6, 2],
+}
+
 # Class to extend the Sklearn classifier
 class SklearnHelper(object):
     def __init__(self, clf, seed=0, params=None):
@@ -263,19 +276,29 @@ def stacking():
     #                          gb_oof_test, svc_oof_test), axis=1)
     X_test = np.concatenate((et_oof_test, rf_oof_test, ada_oof_test, gb_oof_test, svc_oof_test), axis=1)
 
-    gbm = xgb.XGBClassifier(
-        # learning_rate = 0.02,
-        n_estimators=5000,
-        max_depth=4,
-        min_child_weight=2,
-        # gamma=1,
-        gamma=1,
-        subsample=0.8,
-        colsample_bytree=0.8,
-        objective='binary:logistic',
-        nthread=-1,
-        scale_pos_weight=1).fit(X_train, Y_train)
-    predictions = gbm.predict(X_test)
+    # Run the grid search on random forest
+    gbm = xgb.XGBClassifier()
+    print('GXBoost grid search...')
+    grid_obj = GridSearchCV(gbm, xgb_params, scoring=acc_scorer)
+    grid_obj = grid_obj.fit(X_train, Y_train)
+    clf_gbm = grid_obj.best_estimator_
+    clf_gbm.fit(X_train, Y_train)
+
+    predictions = clf_gbm.predict(X_test)
+
+    # gbm = xgb.XGBClassifier(
+    #     # learning_rate = 0.02,
+    #     n_estimators=5000,
+    #     max_depth=4,
+    #     min_child_weight=2,
+    #     # gamma=1,
+    #     gamma=1,
+    #     subsample=0.8,
+    #     colsample_bytree=0.8,
+    #     objective='binary:logistic',
+    #     nthread=-1,
+    #     scale_pos_weight=1).fit(X_train, Y_train)
+    # predictions = gbm.predict(X_test)
 
     StackingSubmission = pd.DataFrame({'PassengerId': PassengerId,
                                        'Survived': predictions})
